@@ -1,5 +1,3 @@
-
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
@@ -42,6 +40,7 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
+float lastdelta = 0.0f;
 
 
 //lighting
@@ -99,20 +98,20 @@ int main()
         glm::vec3(1.0f, 0.5f, 0.31f)
         , glm::vec3(1.0f, 0.5f, 0.31f)
         , glm::vec3(0.5f, 0.5f, 0.5f)
-        , 64);
+        , 256);
 
     Material whiteMaterial(
-        glm::vec3(1.0f, 1.0f, 1.0f)
+        glm::vec3(0.2f, 0.2f, 0.2f)
         , glm::vec3(1.0f, 1.0f, 1.0f)
         , glm::vec3(1.0f, 1.0f, 1.0f)
-        , 32);
+        , 256);
 
     //light:
     Material lightIntensity(
           glm::vec3(0.4f, 0.4f, 0.4f)
         , glm::vec3(0.5f, 0.5f, 0.5f)
         , glm::vec3(1.0f, 1.0f, 1.0f)
-        , 64);
+        , 256);
 
     Light light(
         cube
@@ -138,10 +137,11 @@ int main()
         , defaultMaterial
     );
 
-    Model stone(
+    Model2t stone(
         cube
         , sizeof(cube)
         , "textures/stone.png"
+        , "textures/stone_specular.png"
         , "shaders/vShader.vs"
         , "shaders/fShader.fs"
         , &projection
@@ -150,14 +150,15 @@ int main()
         , whiteMaterial
     );
 
-    glm::vec3 cubePositions[125];
-    glm::vec3 offset(-2.5f, -1.5f, -2.5f);
+    glm::vec3 cubePositions[1];
+    glm::vec3 offset(-2.5f, 0.0f, -2.5f);
     for (int i = 0; i < sizeof(cubePositions) / sizeof(glm::vec3); i++) {
-        cubePositions[i].x = (i % 5) + offset.x;
-        cubePositions[i].y = (i / 5 % 5) + offset.y;
-        cubePositions[i].z = (i / 25 % 5) + offset.z;
+        cubePositions[i].x = (i % 10) + offset.x;
+        cubePositions[i].y = (i / 10 % 10) + offset.y;
+        cubePositions[i].z = (i / 100 % 10) + offset.z;
     }
 
+   
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -168,8 +169,11 @@ int main()
         // per-frame time logic
         // --------------------
         float currentFrame = glfwGetTime();
+        lastdelta = deltaTime;
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        int fps = 1.0f / ((lastdelta + deltaTime) / 2);
+        //std::cout << "FPS: " << fps << std::endl;
 
         // input
         // -----
@@ -184,10 +188,11 @@ int main()
 
         stone.setTranslation(0.0f, -3.0f, 0.0f);
         stone.setScale(100.0f, 0.1f, 100.0f);
+        stone.scaleTexture = glm::vec2(10.0f, 10.0f);
         stone.draw();
 
         ////Update Light Position
-        glm::vec3 lightPos(cos(glfwGetTime() / 2) * 5, 1.5f, sin(glfwGetTime()/ 2)  * 5);
+        glm::vec3 lightPos(cos(glfwGetTime() / 2) * 5, 0.0f, sin(glfwGetTime()/ 2)  * 5);
         light.setTranslation(lightPos);
         light.setScale(0.1f, 0.1f, 0.1f);
         light.draw();
@@ -210,7 +215,7 @@ void drawModelsAtPositions(Model2t* model, int positionCount, glm::vec3* positio
     for (unsigned int i = 0; i < positionCount; i++)
     {
         model->setTranslation(positionArray[i]);
-        model->setRotation((float)glfwGetTime(), 0.3f, 0.5f, 1.0f);
+        model->setRotation((float)glfwGetTime(), 0.0f, 1.0f, 0.0f);
         model->setScale(0.5f, 0.5f, 0.5f);
         model->draw();
 

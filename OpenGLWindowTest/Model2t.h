@@ -50,6 +50,7 @@ public:
 
     glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+    glm::vec2 scaleTexture = glm::vec2(1.0f, 1.0f);
     glm::vec3 rotationAxis = glm::vec3(1.0f, 0.0f, 0.0f);
     float rotationRads = 0.0f;
     Material material;
@@ -114,14 +115,17 @@ public:
         modelMatrix = glm::translate(modelMatrix, translation);
         modelMatrix = glm::rotate(modelMatrix, rotationRads, rotationAxis);
         modelMatrix = glm::scale(modelMatrix, scale);
+        glm::mat4 modelMatrixInv = glm::transpose(glm::inverse(modelMatrix));
 
         //send object information to shaders
         shader.setMat4("projection", *projectionMatrix);
         shader.setMat4("view", camera->GetViewMatrix());
         shader.setMat4("model", modelMatrix);
+        shader.setMat4("modelInv", modelMatrixInv);
 
         if (modelType != MODEL_LIGHT) {
 
+            shader.setVec2("texScale", scaleTexture);
             shader.setInt("material.diffuse", 0);
             shader.setInt("material.specular", 1);
             shader.setVec3("material.ambient", material.ambient);
