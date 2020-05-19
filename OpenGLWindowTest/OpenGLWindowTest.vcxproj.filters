@@ -47,7 +47,7 @@
     <ClInclude Include="light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Model2t.h">
+    <ClInclude Include="mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

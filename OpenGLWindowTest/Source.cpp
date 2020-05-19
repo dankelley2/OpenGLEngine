@@ -1,35 +1,20 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stb_image.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#include <mesh.h>
+#include <model.h>
+#include <classes/camera.h>
 
 #include <iostream>
-#include <classes\shader_m.h>
-#include <classes\camera.h>
-#include <Material.h>
-#include <model.h>
-#include <Model2t.h>
-#include <light.h>
-#include <cube.h>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-extern float cube[];
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void drawModelsAtPositions(Model2t* model, int positionCount, glm::vec3* positionArray);
 void processInput(GLFWwindow* window);
+unsigned int loadTexture(const char* path);
 
 // settings
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 1024;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 1600;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -38,13 +23,8 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
 // timing
-float deltaTime = 0.0f;	// time between current frame and last frame
+float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-float lastdelta = 0.0f;
-
-
-//lighting
-
 
 int main()
 {
@@ -88,92 +68,21 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
-    // world space positions of our cubes
-    // pass projection matrix to shader (note that in this case it could change every frame)
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
+    // build and compile our shader zprogram
+    // ------------------------------------
+    Shader basicShader("shaders/model_loading.vs", "shaders/model_loading.fs");
+    Model backpack("models/backpack/backpack.obj");
 
-    //Materials:
-    Material defaultMaterial(
-        glm::vec3(1.0f, 0.5f, 0.31f)
-        , glm::vec3(1.0f, 0.5f, 0.31f)
-        , glm::vec3(0.5f, 0.5f, 0.5f)
-        , 256);
-
-    Material whiteMaterial(
-        glm::vec3(0.2f, 0.2f, 0.2f)
-        , glm::vec3(1.0f, 1.0f, 1.0f)
-        , glm::vec3(1.0f, 1.0f, 1.0f)
-        , 256);
-
-    //light:
-    Material lightIntensity(
-          glm::vec3(0.4f, 0.4f, 0.4f)
-        , glm::vec3(0.5f, 0.5f, 0.5f)
-        , glm::vec3(1.0f, 1.0f, 1.0f)
-        , 256);
-
-    Light light(
-        cube
-        , sizeof(cube)
-        , "textures/error.png"
-        , "shaders/vShaderLight.vs"
-        , "shaders/fShaderLight.fs"
-        , &projection
-        , &camera
-        , lightIntensity
-    );
-
-    Model2t crate(
-        cube
-        , sizeof(cube)
-        , "textures/container2.png"
-        , "textures/container2_specular.png"
-        , "shaders/vShader.vs"
-        , "shaders/fShader.fs"
-        , &projection
-        , &camera
-        , &light
-        , defaultMaterial
-    );
-
-    Model2t stone(
-        cube
-        , sizeof(cube)
-        , "textures/stone.png"
-        , "textures/stone_specular.png"
-        , "shaders/vShader.vs"
-        , "shaders/fShader.fs"
-        , &projection
-        , &camera
-        , &light
-        , whiteMaterial
-    );
-
-    glm::vec3 cubePositions[1];
-    glm::vec3 offset(-2.5f, 0.0f, -2.5f);
-    for (int i = 0; i < sizeof(cubePositions) / sizeof(glm::vec3); i++) {
-        cubePositions[i].x = (i % 10) + offset.x;
-        cubePositions[i].y = (i / 10 % 10) + offset.y;
-        cubePositions[i].z = (i / 100 % 10) + offset.z;
-    }
-
-   
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-
-        glm::mat4 model = glm::mat4(1.0f);
-
         // per-frame time logic
         // --------------------
         float currentFrame = glfwGetTime();
-        lastdelta = deltaTime;
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        int fps = 1.0f / ((lastdelta + deltaTime) / 2);
-        //std::cout << "FPS: " << fps << std::endl;
 
         // input
         // -----
@@ -181,21 +90,25 @@ int main()
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        drawModelsAtPositions(&crate, sizeof(cubePositions) / sizeof(glm::vec3), cubePositions);
+        // don't forget to enable shader before setting uniforms
+        basicShader.use();
 
-        stone.setTranslation(0.0f, -3.0f, 0.0f);
-        stone.setScale(100.0f, 0.1f, 100.0f);
-        stone.scaleTexture = glm::vec2(10.0f, 10.0f);
-        stone.draw();
+        // view/projection transformations
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 view = camera.GetViewMatrix();
+        basicShader.setMat4("projection", projection);
+        basicShader.setMat4("view", view);
 
-        ////Update Light Position
-        glm::vec3 lightPos(cos(glfwGetTime() / 2) * 5, 0.0f, sin(glfwGetTime()/ 2)  * 5);
-        light.setTranslation(lightPos);
-        light.setScale(0.1f, 0.1f, 0.1f);
-        light.draw();
+        // render the loaded model
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        basicShader.setMat4("model", model);
+        backpack.Draw(basicShader);
+
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -207,19 +120,6 @@ int main()
     // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
-}
-
-void drawModelsAtPositions(Model2t* model, int positionCount, glm::vec3* positionArray)
-{
-
-    for (unsigned int i = 0; i < positionCount; i++)
-    {
-        model->setTranslation(positionArray[i]);
-        model->setRotation((float)glfwGetTime(), 0.0f, 1.0f, 0.0f);
-        model->setScale(0.5f, 0.5f, 0.5f);
-        model->draw();
-
-    }
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -237,10 +137,6 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        camera.ProcessKeyboard(UP, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-        camera.ProcessKeyboard(DOWN, deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -251,7 +147,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
-
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
@@ -278,5 +173,44 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(yoffset);
+}
+
+// utility function for loading a 2D texture from file
+// ---------------------------------------------------
+unsigned int loadTexture(char const* path)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrComponents;
+    unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum format;
+        if (nrComponents == 1)
+            format = GL_RED;
+        else if (nrComponents == 3)
+            format = GL_RGB;
+        else if (nrComponents == 4)
+            format = GL_RGBA;
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
+        stbi_image_free(data);
+    }
+
+    return textureID;
 }
 
