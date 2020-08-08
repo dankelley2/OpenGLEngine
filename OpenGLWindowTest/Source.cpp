@@ -74,8 +74,8 @@ int main()
 
     // build and compile our shader zprogram
     // ------------------------------------
-    Shader basicShader("shaders/model_loading.vs", "shaders/model_loading.fs");
-    Model backpack("models/backpack/backpack.obj");
+    Shader basicShader("shaders/vShader.vs", "shaders/fShader.fs");
+    Model backpack("models/tank/tank.obj");
 
     // render loop
     // -----------
@@ -93,23 +93,35 @@ int main()
 
         // render
         // ------
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
         basicShader.use();
 
+
+        glm::vec3 lightPos(1.0f, 1.0f, 1.0f);
+
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
+
         basicShader.setMat4("projection", projection);
         basicShader.setMat4("view", view);
+
+        basicShader.setVec3("light.position", lightPos);
+        basicShader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+        basicShader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+        basicShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        basicShader.setVec3("viewPos", camera.Position);
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));	// it's a bit too big for our scene, so scale it down
+        //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));
         basicShader.setMat4("model", model);
+
         backpack.Draw(basicShader);
 
 
@@ -140,6 +152,10 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+        camera.ProcessKeyboard(DOWN, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        camera.ProcessKeyboard(UP, deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

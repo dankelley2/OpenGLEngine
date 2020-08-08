@@ -1,0 +1,135 @@
+# Blender MTL File: 'Amphibious Tank 3  Blender 2.8.blend'
+# Material Count: 12
+
+newmtl Air_Tanks
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Air_Tank_Default_nmap.jpg
+
+newmtl Antenas
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Antena_Antenas_nmap.jpg
+
+newmtl Big_Gun
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\gun_Default_nmap.jpg
+map_Ns C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\gun_Default_rough.jpg
+refl C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\gun_Default_metalness.jpg
+
+newmtl Door
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Door_nmap.jpg
+
+newmtl Ground
+Ns 212.326557
+Ka 1.000000 1.000000 1.000000
+Kd 0.434815 0.434815 0.434815
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl MG.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\MG_nmap.jpg
+
+newmtl Material.001
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+
+newmtl Outboards.000
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.050000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Outboards_nmap.jpg
+
+newmtl Outboards.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Outboards_nmap.jpg
+refl C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Outboards_metalness.jpg
+
+newmtl Tank_Body
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Tank_Body_Tank_body_nmap.jpg
+
+newmtl Wast_Air_Pipes
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Wast_Air_Pipes_nmap.jpg
+
+newmtl Wheel.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.319048 0.319048 0.319048
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\danth\\OneDrive\\Documents\\18-amphibious-tank-3-blender-2.8\\textures\\Wheel_nmap.jpg
